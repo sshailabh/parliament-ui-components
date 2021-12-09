@@ -71,3 +71,4 @@ export {
 } from './RequestMaker'
 export { Provider, ThemeSwitcher } from './Provider'
 export { JsonSchema } from './JsonSchema'
+export { DynamicTemplate } from './DynamicTemplate'
