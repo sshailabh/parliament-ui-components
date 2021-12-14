@@ -19,7 +19,8 @@ export default {
 
 export const Default = () => {
   const props = {
-    handlebartemp: "<p>{{profile.person.name.firstName}} {{profile.person.name.lastName}}</p>",
+    handlebartemp:
+      '<p>{{profile.person.name.firstName}} {{profile.person.name.lastName}}</p>',
     jsondata: `{
       "profile": {
         "person": {
@@ -30,7 +31,7 @@ export const Default = () => {
         }
       }
     }`,
-    ispql: "true"
+    ispql: 'false'
   }
 
   return <DynamicTemplate {...props} />
