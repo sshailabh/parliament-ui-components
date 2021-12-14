@@ -19,7 +19,18 @@ export default {
 
 export const Default = () => {
   const props = {
-    variant: 'info'
+    handlebartemp: "<p>{{profile.person.name.firstName}} {{profile.person.name.lastName}}</p>",
+    jsondata: `{
+      "profile": {
+        "person": {
+          "name": {
+             "firstName": "Yehuda",
+             "lastName": "Katz"
+          }
+        }
+      }
+    }`,
+    ispql: "true"
   }
 
   return <DynamicTemplate {...props} />

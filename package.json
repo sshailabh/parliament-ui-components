@@ -90,7 +90,6 @@
     "elasticlunr": "^0.9.5",
     "gatsby": "^4.3.0",
     "gatsby-plugin-remove-serviceworker": "^1.0.0",
-    "handlebars": "^4.7.7",
     "https-browserify": "^1.0.0",
     "httpsnippet": "^2.0.0",
     "jotai": "1.2.2",

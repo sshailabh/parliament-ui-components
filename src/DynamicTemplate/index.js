@@ -13,16 +13,17 @@ import React, { useCallback, useState } from 'react'
 // import { css } from '@emotion/react'
 // import { Flex } from '@adobe/react-spectrum'
 // import './styles'
-import Handlebars from 'handlebars'
 
 const hbr = `Street: {{address.street}}
 City: {{address.city}} 
 Dynamic: {{part}}`
 
-export const DynamicTemplate = () => {
+export const DynamicTemplate = ({handlebartemp, jsondata, ispql}) => {
   const [error, setError] = useState(null)
   const [data, setData] = useState({})
   const [html, setHTML] = useState('')
+  const [res, setRes] = useState(null);
+  const templateDemoUrl = "https://template-demo-dev.corp.ethos11-stage-va7.ethos.adobe.net/render";
 
   const onJSONChange = (e) => {
     const value = e.target.value
@@ -44,11 +45,16 @@ export const DynamicTemplate = () => {
       const obj = stringToHTML()
 
       const strigifiedHTML = obj.body.innerHTML.toString()
-      const template = Handlebars.compile(
-        strigifiedHTML.replaceAll(/\n/g, '<br />')
-      )
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: data, template: strigifiedHTML })
+      };
+      fetch(templateDemoUrl, requestOptions)
+        .then((response) => response.json())
+        .then((data) => setRes(data.t));
 
-      return template(data)
+      return res;
     }
 
     return ''
@@ -57,8 +63,12 @@ export const DynamicTemplate = () => {
   const stringToHTML = () => {
     if (html) {
       var parser = new DOMParser()
-      var doc = parser.parseFromString(html, 'text/html')
-
+      if (ispql == "true") {
+        var doc = parser.parseFromString('{%=' + html + '%}', 'text/html')
+      }
+      else {
+        var doc = parser.parseFromString(html, 'text/html')
+      }
       return doc
     }
     return ''
@@ -72,14 +82,14 @@ export const DynamicTemplate = () => {
           <textarea
             style={{ width: '100%', height: '100%' }}
             onBlur={onJSONChange}
-            defaultValue={JSON.stringify({}, undefined, 2)}
+            defaultValue={jsondata}
           />
         </div>
         <div style={{ height: '100px' }}>
           <textarea
             style={{ width: '100%', height: '100%' }}
             onBlur={onHTMLChange}
-            defaultValue={hbr}
+            defaultValue={handlebartemp}
           />
         </div>
       </div>
