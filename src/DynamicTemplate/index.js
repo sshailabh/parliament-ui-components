@@ -12,38 +12,75 @@ governing permissions and limitations under the License.
 import React, { useEffect, useState } from 'react'
 import './styles.css'
 
+const templateDemoUrl =
+  'https://template-demo-dev.corp.ethos11-stage-va7.ethos.adobe.net/render'
+
 export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
+  const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [data, setData] = useState({})
   const [html, setHTML] = useState('')
   const [res, setRes] = useState(null)
-  const [selectedButton, setSelectedButton] = useState('html')
-  const templateDemoUrl =
-    'https://template-demo-dev.corp.ethos11-stage-va7.ethos.adobe.net/render'
+  // const [selectedButton, setSelectedButton] = useState('html')
 
-  const onTextAreaChange = (e) => {
+  // const onTextAreaChange = (e) => {
+  //   const value = e.target.value
+  //   if (selectedButton === 'data') {
+  //     try {
+  //       const temp = JSON.parse(value)
+  //       setData(temp)
+  //       setError(null)
+  //     } catch (e) {
+  //       setError('Invalid json')
+  //     }
+  //   } else {
+  //     setHTML(e.target.value)
+  //   }
+  // }
+
+  const onHTMLChange = (e) => {
+    setHTML(e.target.value)
+  }
+
+  const onJSONChange = (e) => {
     const value = e.target.value
-    if (selectedButton === 'data') {
-      try {
-        const temp = JSON.parse(value)
-        setData(temp)
-        setError(null)
-      } catch (e) {
-        setError('Invalid json')
-      }
-    } else {
-      setHTML(e.target.value)
+    try {
+      // if (ispql === 'true') {
+      //   const temp = JSON.parse(value)
+      //   setData(temp)
+      //   setError(null)
+      // } else {
+      //   const temp = JSON.parse(value)
+      //   setData(temp)
+      //   setError(null)
+      // }
+      const temp = JSON.parse(value)
+      setData(temp)
+      setError(null)
+    } catch (e) {
+      setError('Invalid json')
     }
   }
 
   useEffect(() => {
     try {
+      // if (ispql === 'true') {
+      //   setData(JSON.parse(jsondata))
+      // } else {
+      //   setData(JSON.parse(jsondata))
+      // }
       setData(JSON.parse(jsondata))
+
       setHTML(handlebartemp)
     } catch (e) {
       setError('Invalid data')
     }
   }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    createTemplate()
+  }, [html, data])
 
   const createTemplate = () => {
     if (html && data) {
@@ -58,6 +95,7 @@ export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
       fetch(templateDemoUrl, requestOptions)
         .then((response) => response.json())
         .then((data) => {
+          setLoading(false)
           setRes(data.t)
         })
 
@@ -67,10 +105,10 @@ export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
     return ''
   }
 
-  const onButtonClick = (e) => {
-    const id = e.target.dataset.id
-    setSelectedButton(id)
-  }
+  // const onButtonClick = (e) => {
+  //   const id = e.target.dataset.id
+  //   setSelectedButton(id)
+  // }
 
   const stringToHTML = () => {
     if (html) {
@@ -88,9 +126,12 @@ export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
 
   return (
     <div className='flex'>
-      <div className='flex flex-column flex-grow p-3 border'>
-        <div className='flex'>
-          <div
+      <div
+        className='flex flex-column flex-grow p-3 border'
+        style={{ height: '300px' }}
+      >
+        {/* <div className='flex'> */}
+        {/* <div
             className={`button-secondary border ${
               selectedButton === 'html' ? 'isSelected' : ''
             }`}
@@ -107,15 +148,25 @@ export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
             onClick={onButtonClick}
           >
             DATA
-          </div>
-        </div>
-        <div className='flex-grow mr-12'>
-          <div style={{ height: '200px' }}>
+          </div> */}
+        {/* </div> */}
+        <div className='flex-grow mr-12 flex'>
+          <div className='flex-grow mr-8 '>
+            HTML:
             <textarea
               className='textarea'
-              style={{ width: '100%', height: '100%' }}
-              onBlur={onTextAreaChange}
-              value={selectedButton === 'data' ? jsondata : handlebartemp}
+              style={{ width: '100%', height: '90%' }}
+              onBlur={onHTMLChange}
+              defaultValue={handlebartemp}
+            />
+          </div>
+          <div className='flex-grow'>
+            DATA:
+            <textarea
+              className='textarea'
+              style={{ width: '100%', height: '90%' }}
+              onBlur={onJSONChange}
+              defaultValue={jsondata}
             />
           </div>
         </div>
@@ -125,7 +176,9 @@ export const DynamicTemplate = ({ handlebartemp, jsondata, ispql }) => {
       ) : (
         <div
           className='whiteSpacePre flex-grow border'
-          dangerouslySetInnerHTML={{ __html: createTemplate() }}
+          dangerouslySetInnerHTML={{
+            __html: isLoading ? 'loading...' : createTemplate()
+          }}
         />
       )}
     </div>

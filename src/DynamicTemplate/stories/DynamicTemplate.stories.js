@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -25,13 +26,24 @@ export const Default = () => {
       "profile": {
         "person": {
           "name": {
-             "firstName": "Yehuda",
-             "lastName": "Katz"
+             "firstName": "Saloni",
+             "lastName": "Kathuria"
           }
         }
       }
     }`,
     ispql: 'false'
+  }
+
+  return <DynamicTemplate {...props} />
+}
+
+export const PQL = () => {
+  const props = {
+    jsondata:
+      '{"profile": {"person": { "name": {"firstName": "Journey", "lastName": "Creator"}}}}',
+    handlebartemp: `profile.person.name.firstName.contains(\"u\")`,
+    ispql: 'true'
   }
 
   return <DynamicTemplate {...props} />
